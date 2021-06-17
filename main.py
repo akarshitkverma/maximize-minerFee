@@ -13,14 +13,14 @@ class MempoolTransaction():
                 MempoolTransaction.allParentTxns.add(parent)
         self.visited = False
 
-    #Static method to check if a transaction is parent 
+    #Static method to check if a transaction is parent.
     @staticmethod
     def isParent(txn):
         if(txn.txid in MempoolTransaction.allParentTxns):
             return True
         return False
 
-    # Method to cumulate transaction weight and fee with all it' parents.
+    # Method to cumulate transaction weight and fee with all its parents.
     def cumulate(self,mempoolTxns):
         self.visited = True
         for parent in self.parents:
@@ -58,21 +58,21 @@ class Mempool():
                 params = line.strip().split(',')
                 self.mempoolTxns[params[0]] = MempoolTransaction(*params)
     
-    # This method will create list of independentTxns by cumulating all its parent.
+    # This method will create list of independentTxns by cumulating it with all its parent.
     # So the child will have weights and fees of all its parent transaction.
     def equivalentIndependentTxns(self):
         for txid in self.mempoolTxns:
             currentTxn = self.mempoolTxns[txid]
             # We will ignore the transactions if 
             # - it is already visited
-            # - or it is a parent of another transaction, as in that case it will be covered when we will deal with it;s child.
+            # - or it is a parent of another transaction, as in that case it will be covered when we will deal with its child.
             if (currentTxn.visited or MempoolTransaction.isParent(currentTxn)):
                 continue
             else:
                 currentTxn.cumulate(self.mempoolTxns)
                 self.independentTxns.append(currentTxn)
 
-    # This method will now select independent transaction according to weight
+    # This method will now select independent transaction according to given constraints
     def selectIndependtentTxns(self, independentTxns, blockWeight):
         currentWeight = 0
         currentFee = 0
@@ -91,7 +91,7 @@ class Mempool():
             currentTxn = self.mempoolTxns[txid]
             currentTxn.visited = False
 
-    #Topologicl Sort for Independent transaction a sorted order
+    #It will make sure that transaction are inserted in correct order.
     def traverseDependencies(self,selectedIndependtentTxns):
         self.visitedReset()
         blockIds = []
@@ -112,7 +112,7 @@ class Mempool():
         self.independentTxns.sort(key = lambda x: x.fee/x.weight,reverse = True)
         #Select best independent transaction according to constraint
         selectedIndependtentTxns = self.selectIndependtentTxns(self.independentTxns, blockWeight)
-        #Method to get all the selected transaction included in the right order
+        #Get all the selected transaction included in the right order
         blockIds = self.traverseDependencies(selectedIndependtentTxns)
         #Writing to block.txt
         with open('block.txt', 'w') as f:
