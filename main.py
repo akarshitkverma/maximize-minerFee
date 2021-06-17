@@ -13,7 +13,7 @@ class MempoolTransaction():
                 MempoolTransaction.allParentTxns.add(parent)
         self.visited = False
 
-    #Static method to check if a transaction is parent.
+    # Static method to check if a transaction is parent.
     @staticmethod
     def isParent(txn):
         if(txn.txid in MempoolTransaction.allParentTxns):
@@ -35,7 +35,7 @@ class MempoolTransaction():
                     self.count += previousCount
         return[self.weight,self.fee,self.count]
 
-    #Given an Indenpendent transaction, this method will make sure all the parents are inserted to the blockIds, before the child.
+    # Given an Indenpendent transaction, this method will make sure all the parents are inserted to the blockIds, before the child.
     def traverseParents(self,mempoolTxns,blockIds):
         self.visited = True
         for parent in self.parents:
@@ -91,7 +91,7 @@ class Mempool():
             currentTxn = self.mempoolTxns[txid]
             currentTxn.visited = False
 
-    #It will make sure that transaction are inserted in correct order.
+    # It will make sure that transaction are inserted in correct order.
     def traverseDependencies(self,selectedIndependtentTxns):
         self.visitedReset()
         blockIds = []
@@ -106,21 +106,21 @@ class Mempool():
 
     # Method to create block
     def createBlock(self, blockWeight=4000000):
-        #Cumulate all the transaction
+        # Cumulate all the transaction
         self.equivalentIndependentTxns()
-        #Sort by ratio between total fee and total weight for each block
+        # Sort by ratio between total fee and total weight for each block
         self.independentTxns.sort(key = lambda x: x.fee/x.weight,reverse = True)
-        #Select best independent transaction according to constraint
+        # Select best independent transaction according to constraint
         selectedIndependtentTxns = self.selectIndependtentTxns(self.independentTxns, blockWeight)
-        #Get all the selected transaction included in the right order
+        # Get all the selected transaction included in the right order
         blockIds = self.traverseDependencies(selectedIndependtentTxns)
-        #Writing to block.txt
+        # Writing to block.txt
         with open('block.txt', 'w') as f:
             for txid in blockIds:
                 f.write("%s\n" % txid)
         
     
-    #Check for valid block
+    # Check for valid block
     def checkValid(self,block):
         order = set()
         for txid in block:
@@ -142,5 +142,5 @@ if __name__ == "__main__":
     mempool = Mempool()
     # Parsing
     mempool.parse_mempool_csv()
-    #Creating block given contrain, blockWeight=4000000
+    # Creating block given contrain, blockWeight=4000000
     mempool.createBlock()
