@@ -2,6 +2,17 @@
 
 An optimized way to maximize Miner Fee while creating Blocks.
 
+## About
+
+Bitcoin miners construct blocks by selecting a set of transactions from their mempool. Each transaction in the mempool:
+
+- includes a fee which is collected by the miner if that transaction is included in a block
+- has a weight , which indicates the size of the transaction
+- may have one or more parent transactions which are also in the mempool
+
+The miner selects an ordered list of transactions which have a combined weight below the maximum block weight. Transactions with parent transactions in the mempool may be included in the list, but only if all of their parents appear before them in the list.
+Naturally, the miner would like to include the transactions that maximize the total fee.
+
 ## Problem Statement
 
 - To create a valid block from the pending transactions, maximizing the fee to the miner.
@@ -36,6 +47,9 @@ It is an overview. Check out the main.py file to understand more how the code wo
 
 - **Block Weight: 3999808**
 - **Block Fee: 5797979**
+
+## Update
+- **The solution was ranked in the top 1%(among thousands) of the Summer of Bitcoin Challenge 2021.**
 
 ## References
 
